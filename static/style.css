@@ -121,3 +121,40 @@ button {
 @keyframes spin {
     100% { transform: rotate(360deg); }
 }
+
+
+/* ROOT + SUFFIX COLORS */
+.root {
+    color: #22c55e;
+    font-weight: bold;
+}
+
+.suffix {
+    color: #facc15;
+    font-weight: bold;
+}
+
+/* CARD IMPROVEMENTS */
+.word-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.section {
+    margin: 8px 0;
+}
+
+ul {
+    margin: 5px 0 0 15px;
+}
+
+.explanation {
+    background: #0f172a;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+/* ERROR CARD */
+.card.error {
+    border-left: 4px solid #ef4444;
+}
