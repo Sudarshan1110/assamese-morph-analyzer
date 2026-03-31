@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Assamese Morph Analyzer</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>🔍 Assamese Morph Analyzer</h1>
+
+        <div class="search-box">
+            <input type="text" id="inputBox" placeholder="Enter word or sentence..." autocomplete="off">
+            <div id="suggestions" class="suggestions"></div>
+        </div>
+
+        <button onclick="analyze()">Analyze</button>
+
+        <div id="results"></div>
+
+        <div class="history-section">
+            <div class="history-header">
+                <h2>History</h2>
+                <button onclick="clearHistory()" class="danger">Clear</button>
+            </div>
+            <div id="history"></div>
+        </div>
+        <div id="loader" class="loader hidden"></div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>
