@@ -19,9 +19,15 @@ async function analyze() {
     try {
         const res = await fetch("/analyze", {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ text })
         });
+
+        // ✅ SAFE FETCH
+        if (!res.ok) {
+            const errText = await res.text();
+            throw new Error(errText);
+        }
 
         const data = await res.json();
 
@@ -31,7 +37,7 @@ async function analyze() {
                 if (res.error) {
                     resultsDiv.innerHTML += `
                         <div class="card error">
-                            ❌ <b>${res.word}</b><br>
+                            ❌ <b>${res.word || "Unknown"}</b><br>
                             Not found in dictionary.<br>
                             Try another word or check spelling.
                         </div>
@@ -39,17 +45,20 @@ async function analyze() {
                     return;
                 }
 
-                const a = res.analysis;
+                const a = res.analysis || {};
 
-                // Root + suffix split
-                const root = a.lemma;
+                // ✅ SAFE ROOT (fallback support)
+                const root = a.root || a.lemma || "Unknown";
                 const suffix = res.suffix || "";
 
                 const formattedWord = suffix
                     ? `<span class="root">${root}</span><span class="suffix"> + ${suffix}</span>`
                     : `<span class="root">${root}</span>`;
 
-                // Build grammatical info
+                // ✅ SAFE POS
+                const pos = res.explanation ? res.explanation[0] : "Unknown";
+
+                // ---------------- GRAMMAR ----------------
                 let grammar = "";
                 if (a.features) {
                     if (a.features.number)
@@ -60,18 +69,26 @@ async function analyze() {
                         grammar += `<li><b>Definiteness:</b> ${a.features.definiteness}</li>`;
                 }
 
-                // Explanation sentence
-                let explanation = `This word is a ${res.explanation[0].toLowerCase()}`;
+                if (!grammar) {
+                    grammar = "<li>No grammatical info available</li>";
+                }
+
+                // ---------------- EXPLANATION ----------------
+                let explanation = `This word is a ${pos.toLowerCase()}`;
+
                 if (a.features?.number)
                     explanation += `, ${a.features.number.toLowerCase()}`;
                 if (a.features?.definiteness)
                     explanation += `, ${a.features.definiteness.toLowerCase()}`;
+
                 explanation += ` formed from root "${root}"`;
+
                 if (suffix)
                     explanation += ` using suffix "${suffix}"`;
 
                 explanation += ".";
 
+                // ---------------- UI CARD ----------------
                 resultsDiv.innerHTML += `
                     <div class="card">
                         <div class="word-title">🔍 ${res.word}</div>
@@ -81,7 +98,7 @@ async function analyze() {
                         </div>
 
                         <div class="section">
-                            🔵 <b>Part of Speech:</b> ${res.explanation[0]}
+                            🔵 <b>Part of Speech:</b> ${pos}
                         </div>
 
                         <div class="section">
@@ -101,7 +118,13 @@ async function analyze() {
         addHistory(text);
 
     } catch (err) {
-        resultsDiv.innerHTML = `<div class="card error">⚠️ Error occurred</div>`;
+        console.error(err);
+        resultsDiv.innerHTML = `
+            <div class="card error">
+                ⚠️ Something went wrong.<br>
+                Please try again.
+            </div>
+        `;
     }
 
     loader.classList.add("hidden");
@@ -141,28 +164,40 @@ input.addEventListener("input", function () {
     }
 
     debounceTimer = setTimeout(async () => {
-        const res = await fetch("/suggest", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({ prefix })
-        });
+        try {
+            const res = await fetch("/suggest", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prefix })
+            });
 
-        const data = await res.json();
-
-        suggestionsBox.innerHTML = "";
-        selectedIndex = -1;
-
-        data.forEach(word => {
-            const div = document.createElement("div");
-            div.textContent = word;
-
-            div.onclick = () => {
-                input.value = word;
+            // ✅ SAFE FETCH
+            if (!res.ok) {
                 suggestionsBox.innerHTML = "";
-            };
+                return;
+            }
 
-            suggestionsBox.appendChild(div);
-        });
+            const data = await res.json();
+
+            suggestionsBox.innerHTML = "";
+            selectedIndex = -1;
+
+            data.forEach(word => {
+                const div = document.createElement("div");
+                div.textContent = word;
+
+                div.onclick = () => {
+                    input.value = word;
+                    suggestionsBox.innerHTML = "";
+                };
+
+                suggestionsBox.appendChild(div);
+            });
+
+        } catch (err) {
+            console.error("Suggestion error:", err);
+            suggestionsBox.innerHTML = "";
+        }
 
     }, 300);
 });
