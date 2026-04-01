@@ -51,18 +51,10 @@ async function analyze() {
                 const root = a.root || a.lemma || "Unknown";
                 const suffix = res.suffix || "";
 
-                const formattedWord = suffix
-                    ? `
-        <div class="word-break">
-            <div class="root">${root}</div>
-            <div class="suffix">${suffix}</div>
-        </div>
-      `
-                    : `
-        <div class="word-break">
-            <div class="root">${root}</div>
-        </div>
-      `;
+                const rootDisplay = `<span class="root">${root}</span>`;
+                const suffixDisplay = suffix
+                    ? `<span class="suffix">${suffix}</span>`
+                    : `<span class="suffix none">None</span>`;
 
                 // ✅ SAFE POS
                 const pos = res.explanation ? res.explanation[0] : "Unknown";
@@ -103,7 +95,11 @@ async function analyze() {
                         <div class="word-title">🔍 ${res.word}</div>
 
                         <div class="section">
-                            🟢 <b>Root:</b> ${formattedWord}
+                        🟢 <b>Root:</b> ${rootDisplay}
+                        </div>
+
+                        <div class="section">
+                        🟡 <b>Suffix:</b> ${suffixDisplay}
                         </div>
 
                         <div class="section">

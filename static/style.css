@@ -180,3 +180,18 @@ ul {
     font-size: 14px;
     margin-left: 5px;
 }
+
+.root {
+    color: #22c55e;
+    font-weight: bold;
+}
+
+.suffix {
+    color: #facc15;
+    font-weight: bold;
+}
+
+.suffix.none {
+    color: #64748b;
+    font-style: italic;
+}
