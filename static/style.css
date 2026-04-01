@@ -73,7 +73,7 @@ button {
 
 .card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
 /* HISTORY */
@@ -119,7 +119,9 @@ button {
 }
 
 @keyframes spin {
-    100% { transform: rotate(360deg); }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 
@@ -157,4 +159,24 @@ ul {
 /* ERROR CARD */
 .card.error {
     border-left: 4px solid #ef4444;
+}
+
+.word-break {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    margin-top: 5px;
+}
+
+.root {
+    color: #22c55e;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.suffix {
+    color: #facc15;
+    font-size: 14px;
+    margin-left: 5px;
 }

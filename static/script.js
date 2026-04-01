@@ -52,8 +52,17 @@ async function analyze() {
                 const suffix = res.suffix || "";
 
                 const formattedWord = suffix
-                    ? `<span class="root">${root}</span><span class="suffix"> + ${suffix}</span>`
-                    : `<span class="root">${root}</span>`;
+                    ? `
+        <div class="word-break">
+            <div class="root">${root}</div>
+            <div class="suffix">${suffix}</div>
+        </div>
+      `
+                    : `
+        <div class="word-break">
+            <div class="root">${root}</div>
+        </div>
+      `;
 
                 // ✅ SAFE POS
                 const pos = res.explanation ? res.explanation[0] : "Unknown";
